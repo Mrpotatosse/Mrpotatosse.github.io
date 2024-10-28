@@ -6,7 +6,6 @@ const SPACE = " ";
 /// GLOBAL
 const terminal = document.getElementById("terminal");
 const result = document.getElementById("result");
-const range = document.createRange();
 /// 
 
 /**
