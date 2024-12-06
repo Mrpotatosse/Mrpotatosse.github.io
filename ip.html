@@ -1,39 +1,154 @@
-<html>
+<html class="w-full h-full">
 	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<script src="https://cdn.tailwindcss.com"></script>
 	<head>
-	<body>
-		<div>
-			<label for="ip-input">ip:</label>
-			<input id="ip-input" type="text"/>
-		</div>
-		<div>
-			<label for="subnet-input">subnet:</label>
-			<input id="subnet-input" type="number" />
-		</div>
-		<div>
-			<button id="ip-button-submit">submit</button>
-		</div>
-		<div>
-			<span id="output"></span>
+	<body class="w-full h-full flex justify-center items-center bg-gray-800">
+		<div class="lg:w-96 w-full mx-2 bg-white rounded-sm shadow dark:bg-gray-800 dark:border-gray-700 space-y-2">
+			<section id="solveur" class="p-2  border border-gray-200 dark:border-gray-700">
+				<div class="mb-2">
+					<label for="solveur-ip-input" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">IP</label>
+					<input type="text" id="solveur-ip-input" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-sm focus:ring-blue-500 focus:border-blue-500 block w-full p-2 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+				</div>
+				<div class="mb-6">
+					<label for="solveur-subnet-input" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Nombre de sous-réseaux</label>
+					<input type="number" id="solveur-subnet-input" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-sm focus:ring-blue-500 focus:border-blue-500 block w-full p-2 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+				</div>
+				<div>
+					<button id="solveur-compute-button" class="w-full text-white bg-gray-800 border-gray-200 hover:bg-gray-900 font-medium rounded-sm text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700">calculer</button>
+				</div>
+				<div id="solveur-output" class="text-white"></div>
+			</section>
+			<section id="question" class="hidden p-2 border border-gray-200 dark:border-gray-700">
+				<div class="flex items-center">
+					<div class="w-full">
+						<div class="mb-2">
+							<span class="text-xl font-medium text-gray-900 dark:text-white bold">IP: </span>
+							<span id="question-ip" class="text-xl font-medium text-gray-900 dark:text-white bold">127.0.0.1/22</span>
+						</div>
+						<div class="mb-6">
+							<span class="text-xl font-medium text-gray-900 dark:text-white bold">Sous-réseaux: </span>
+							<span id="question-subnet" class="text-xl font-medium text-gray-900 dark:text-white bold">4</span>
+						</div>
+					</div>
+					<div class="w-12 text-white p-2">
+						<button id="refresh-button" class="w-full h-full">
+							<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-clockwise w-full h-full" viewBox="0 0 16 16">
+								<path fill-rule="evenodd" d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2z"/>
+								<path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466"/>
+							</svg>
+						</button>
+					</div>
+				</div>
+				<div>
+					<button id="solution-button" class="w-full text-white bg-gray-800 border-gray-200 hover:bg-gray-900 font-medium rounded-sm text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700">solution</button>
+				</div>
+			</section>
+			<div class="border border-gray-200 dark:border-gray-700 text-white">
+				<button id="solveur-button" class="w-full hidden">solveur</button>
+				<button id="question-button" class="w-full">question</button>
+			</div>
 		</div>
 	</body>
 </html>
 <script>
-	const ipInput = document.getElementById("ip-input");
-	const ipButtonSubmit = document.getElementById("ip-button-submit");
-	const output = document.getElementById("output");
-	const subnetInput = document.getElementById("subnet-input");
-	
+	const solveurButton = document.getElementById("solveur-button");
+	const questionButton = document.getElementById("question-button");
+	const refreshButton = document.getElementById("refresh-button");
+	const solutionButton = document.getElementById("solution-button");
+	const computeButton = document.getElementById("solveur-compute-button");
+
+	const solveur = document.getElementById("solveur");
+	const solveurIpInput = document.getElementById("solveur-ip-input");
+	const solveurSubnetInput = document.getElementById("solveur-subnet-input");
+	const solveurOutput = document.getElementById("solveur-output");
+
+	const question = document.getElementById("question");
+	const questionIp = document.getElementById("question-ip");
+	const questionSubnet = document.getElementById("question-subnet");
+
+	function switchToSolveur() {
+		solveur.classList.remove("hidden");
+		question.classList.add("hidden");
+		solveurButton.classList.add("hidden");
+		questionButton.classList.remove("hidden");
+	}
+
+	function switchToQuestion() {
+		solveur.classList.add("hidden");
+		question.classList.remove("hidden");
+		solveurButton.classList.remove("hidden");
+		questionButton.classList.add("hidden");
+	}
+
+	/**
+	 * 
+	 * @param {number} from
+	 * @param {number} to
+	*/
+	function random(from, to) {
+		const diff = to - from;
+		return Math.floor(from + (Math.random() * diff));
+	}
+
+	function randomIp() {
+		return `${random(0, 256)}.${random(0, 256)}.${random(0, 256)}.${random(0, 256)}/${random(1,26)}`
+	}
+
+	function randomQuestion() {
+		questionIp.innerText = randomIp();
+		questionSubnet.innerText = random(2, 17);
+	}
+
+	function setSolveurIpFromQuestion() {
+		solveurIpInput.value = questionIp.innerText;
+		solveurSubnetInput.value = questionSubnet.innerText;
+
+		displayResult();
+		switchToSolveur();
+	}
+
+	function displayResult() {
+		const ipValue = solveurIpInput.value;
+		const subnetSize = solveurSubnetInput.value;
+
+		if(ipValue && subnetSize) {
+			const result = getResult(ipValue, Number.parseInt(subnetSize));
+
+			solveurOutput.innerText = `
+	@ip: ${result.ip.join(".")}/${result.maskSize}
+	mask: ${result.mask.join(".")}
+	@rso: ${result.network.join(".")}
+	@bdt: ${result.broadcast.join(".")}
+
+	subnets: (${result.subnet.ips.length}/${result.subnet.maxIps})
+	${result.subnet.ips.map((v, i) => `@ip_${i+1}: ${v.join(".")}/${result.subnet.bits}`).join("\n")}
+	`
+		}
+	}
+
+	/**
+	 * 
+	 * @param {number} bits
+	 * @returns {number}
+	*/
 	function getNByte(bits) {
 		if(bits > 8) return 1 + getNByte(bits - 8);
 		return 1;
 	}
-	
+	/**
+	 * 
+	 * @param {number} bits
+	*/
 	function getPas(bits) {
 		if (bits > 8) return getPas(bits - 8);
 		return 0x0100 >> bits;
 	}
-	
+	/**
+	 * 
+	 * @param {number} bits
+	*/
 	function getMask(bits) {
 		const first = 0b10000000_00000000_00000000_00000000;
 		let mask = 0;
@@ -48,7 +163,10 @@
 
 		return [(mask & f1) >>> 24, (mask & f2) >>> 16, (mask & f3) >>> 8, mask & f4]
 	}
-	
+	/**
+	 * @param {number[]} ip
+	 * @param {number} bits
+	*/
 	function getNetwork(ip, bits) {
 		const nb = getNByte(bits);
 		const pas = getPas(bits);
@@ -63,7 +181,10 @@
 			return v;
 		});
 	}
-	
+	/**
+	 * @param {number[]} ip
+	 * @param {number} bits
+	*/
 	function getBroadcast(ip, bits) {
 		const nb = getNByte(bits);
 		const pas = getPas(bits);
@@ -78,7 +199,11 @@
 			return v;
 		});
 	}
-	
+	/**
+	 * @param {number[]} ip
+	 * @param {number} bits
+	 * @param {number} size
+	*/
 	function getSubnet(ip, bits, size) {
 		const ips = [];
 		const nbits = bits + Math.ceil(Math.log2(size));
@@ -100,12 +225,15 @@
 	
 		return {
 			ips,
-			bits: nbits
+			bits: nbits,
+			maxIps: Math.pow(2, Math.ceil(Math.log2(size)))
 		}
 	}
-	
-	function submit() {
-		const ipValue = ipInput.value;
+	/**
+	 * @param {string} ipValue
+	 * @param {number} subnetSize
+	*/
+	function getResult(ipValue, subnetSize) {
 		const arr = ipValue.split("/");
 		
 		const bits = Number.parseInt(arr[1]);
@@ -114,20 +242,21 @@
 		const network = getNetwork(ip, bits);
 		const broadcast = getBroadcast(ip, bits);
 		
-		const subnetValue = subnetInput.value;
-		const subnetSize = Number.parseInt(subnetValue);
 		const subnet = getSubnet(network, bits, subnetSize);
 
-		output.innerText = `
-@ip: ${ip.join(".")}
-mask: ${mask.join(".")}
-@rso: ${network.join(".")}
-@bdt: ${broadcast.join(".")}
-
-subnets: 
-${subnet.ips.map(v => `@ip: ${v.join(".")}/${subnet.bits}`).join("\n")}
-`;
+		return {
+			ip,
+			maskSize: bits,
+			mask,
+			network,
+			broadcast,
+			subnet,
+		}
 	}
-	
-	ipButtonSubmit.addEventListener("click", submit);
+
+	solveurButton.addEventListener("click", switchToSolveur);
+	questionButton.addEventListener("click", switchToQuestion);
+	refreshButton.addEventListener("click", randomQuestion);
+	solutionButton.addEventListener("click", setSolveurIpFromQuestion);
+	computeButton.addEventListener("click", displayResult);
 </script>
