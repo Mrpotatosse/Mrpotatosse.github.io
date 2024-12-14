@@ -1,0 +1,62 @@
+[
+  {
+    "command": "ls",
+    "description": "liste le contenu d'un répertoire",
+    "usage": "ls [OPTION]... [FICHIER]...",
+    "detail": [
+      {
+        "text":  "ls /",
+        "commentary": "pour afficher le contenu du dossier racine"
+      },
+      {
+        "text": "ls .",
+        "commentary": "équivalent à ls"
+      }
+    ]
+  },
+  {
+    "command": "cd",
+    "description": "change le répertoire actuel",
+    "usage": "cd [OPTION]... [REPERTOIRE]"
+  },
+  {
+    "command": "touch",
+    "description": "mettre à jour la date de modification d'un fichier, sinon le crée",
+    "usage": "touch [OPTION]... FICHIER..."
+  },
+  {
+    "command": "pwd",
+    "description": "afficher le répertoire courant",
+    "usage": "pwd [OPTION]..."
+  },
+  {
+    "command": "mv",
+    "description": "deplacer (renommer) un fichier",
+    "usage": "mv [OPTION]... SOURCE DESTINATION"
+  },
+  {
+    "command": "cp",
+    "description": "copier des fichiers et des répertoires",
+    "usage": "cp [OPTION]... SOURCE DESTINATION"
+  },
+  {
+    "command": "rm",
+    "description": "supprimer des fichiers ou des répertoires",
+    "usage": "rm [OPTION]... [FICHIER]..."
+  },
+  {
+    "command": "wc",
+    "description": "afficher le nombre d'octets, de mots, de ligne du contenu d'un fichier",
+    "usage": "wc [OPTION]... [FICHIER]..."
+  },
+  {
+    "command": "cut",
+    "description": "supprimer (séparer) chaque ligne d'un fichier",
+    "usage": "cut OPTION... [FICHIER]..."
+  },
+  {
+    "command": "grep",
+    "description": "afficher les lignes qui matchent le pattern",
+    "usage": "grep [OPTION]... PATTERN [FICHIER...]"
+  }
+]

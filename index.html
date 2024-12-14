@@ -1,17 +1,75 @@
 <!DOCTYPE html>
-<html lang="en" class="w-full h-full">
-    <head>
-        <meta charset="UTF-8" />
-        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <script src="https://cdn.tailwindcss.com" nonce></script>
-        <script src="main.js" defer nonce></script>
-        <title>Mrpotatosse</title>
-    </head>
-    <body class="w-full h-full flex justify-center items-center">
-        <div class="w-full h-full max-h-full md:w-96 lg:h-48 max-h-full min-h-full lg:min-h-56">
-            <div id="terminal" class="p-1 bg-black w-full h-1/2 text-white text-xs focus:outline-none focus:ring-0 focus:border-transparent" contenteditable></div>
-            <pre class="p-1 w-full text-xs"><code id="result"></code></pre>
-        </div>
-    </body>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Linux command</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.10.0/styles/atom-one-dark.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.10.0/highlight.min.js"></script>
+    <!-- and it's easy to individually load additional languages -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.10.0/languages/bash.min.js"></script>
+    <script>hljs.highlightAll();</script>
+</head>
+<body class="bg-slate-900 m-2 text-white text-sm space-y-2">
+    <section id="table-section" class="w-full border border-gray-600">
+        <table id="table" class="table table-auto w-full divide-y divide-gray-600">
+            <thead id="table-head" class="table-header-group h-10">
+            <tr class="table-row *:text-left *:text-lg *:px-2">
+                <th>Command</th>
+                <th>Description</th>
+                <th>Utilisation</th>
+            </tr>
+            </thead>
+            <tbody id="table-body" class="table-row-group bg-white dark:bg-slate-800 divide-y divide-gray-600">
+            </tbody>
+        </table>
+    </section>
+    <section id="element-detail-section" class="w-full">
+        <pre><code id="element-detail-text" class="language-bash bg-transparent  border border-gray-600 p-0"></code></pre>
+    </section>
+</body>
 </html>
+<script>
+    /**
+     * @typedef CommandInfo
+     * @type {object}
+     * @property {string} command
+     * @property {string} description
+     * @property {string} usage
+     * @property {Array<CommandInfoDetail>} detail
+     */
+
+    /**
+     * @typedef CommandInfoDetail
+     * @type {object}
+     * @property {string} text
+     * @property {string} commentary
+     */
+
+    /** @type {Promise<Array<CommandInfo>>} */
+    const dataJson = fetch("/assets/json/linux_command.json").then(res => res.json());
+    const tableBody = document.getElementById("table-body");
+    const elementDetailText = document.getElementById("element-detail-text");
+
+    dataJson.then(data => {
+        for(const element of data) {
+            const child = document.createElement("tr");
+            child.classList.add("table-row", "h-8", "cursor-pointer", "*:text-base", "*:px-2");
+            child.addEventListener("click", () => {
+                elementDetailText.innerHTML = hljs.highlight(`${element.detail?.map(el => `# ${el.commentary}\n${el.text}`).join("\n\n") ?? ""}`, { language: "bash" }).value;
+            })
+
+            const command = document.createElement("td");
+            command.innerText = element.command;
+
+            const description = document.createElement("td");
+            description.innerText = element.description;
+
+            const usage = document.createElement("td");
+            usage.innerText = element.usage;
+
+            child.append(command, description, usage);
+            tableBody.appendChild(child);
+        }
+    });
+</script>
